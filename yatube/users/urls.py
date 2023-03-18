@@ -1,5 +1,5 @@
 from django.urls import path
-from django.contrib.auth.views import LogoutView, LoginView, PasswordResetView
+from django.contrib.auth.views import LogoutView, LoginView
 from . import views
 
 
