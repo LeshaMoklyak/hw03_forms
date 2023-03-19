@@ -1,13 +1,14 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from .models import Post, Group, User
-from yatube.settings import POST_PER_PAGE
+
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from .forms import PostForm
-from django.contrib.auth.decorators import login_required
+from .models import Group, Post, User
+from yatube.settings import POST_PER_PAGE
 
 
 def index(request):
-    post_list = Post.objects.all()
+    post_list = Post.objects.select_related('group', 'author')
     paginator = Paginator(post_list, POST_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -19,7 +20,7 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    post_list = group.posts.all()
+    post_list = group.posts.select_related('group', 'author')
     paginator = Paginator(post_list, POST_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
@@ -32,25 +33,21 @@ def group_posts(request, slug):
 
 def profile(request, username):
     author = get_object_or_404(User, username=username)
-    post_list = Post.objects.filter(author=author)
+    post_list = author.posts.select_related('group')
     paginator = Paginator(post_list, POST_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-    page_count = Post.objects.filter(author=author).count
     context = {
         'author': author,
         'page_obj': page_obj,
-        'page_count': page_count,
     }
     return render(request, 'posts/profile.html', context)
 
 
 def post_detail(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
-    page_count = Post.objects.filter(author=post.author).count
     context = {
         'post': post,
-        'page_count': page_count,
     }
     return render(request, 'posts/post_detail.html', context)
 
@@ -58,13 +55,12 @@ def post_detail(request, post_id):
 @login_required
 def post_create(request):
     form = PostForm(request.POST or None)
-    if request.method == 'POST':
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = request.user
-            form.save()
-            return redirect('posts:profile', username=post.author)
-    return render(request, 'posts/create_post.html', {'form': PostForm()})
+    if form.is_valid():
+        post = form.save(commit=False)
+        post.author = request.user
+        form.save()
+        return redirect('posts:profile', username=post.author)
+    return render(request, 'posts/create_post.html', {'form': form})
 
 
 @login_required
@@ -72,14 +68,13 @@ def post_edit(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
     if post.author != request.user:
         return redirect('posts:post_detail', post_id)
-    form = PostForm(request.POST or None)
+    form = PostForm(request.POST or None, instance=post)
     if form.is_valid():
         post = form.save(commit=False)
-        post.author = request.user
         form.save()
         return redirect('posts:post_detail', post_id)
     context = {
-        'form': PostForm(instance=post),
+        'form': form,
         'post_id': post_id,
         'is_edit': True
     }

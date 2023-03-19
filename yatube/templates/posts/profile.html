@@ -1,17 +1,17 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block title %}
-  Профайл пользователя {{author}}
+  Профайл пользователя {{ author.get_full_name }}
 {% endblock  %}
 {% block content %}     
           
-        <h1>Все посты пользователя {{author}} </h1>
-        <h3>Всего постов: {{page_count}} </h3>   
+        <h1>Все посты пользователя {{ author.get_full_name }} </h1>
+        <h3>Всего постов: {{ author.posts.count }} </h3>   
         {% for post in page_obj %}  
         <article>
           <ul>
             <li>
-              Дата публикации: {{post.pub_date}}
+              Дата публикации: {{ post.pub_date|date:"d E Y" }}
             </li>
           </ul>
           <p>
@@ -27,4 +27,4 @@
         {% endfor %}
         {% include 'includes/paginator.html' %}
 
-    {% endblock content %}
+    {% endblock %}

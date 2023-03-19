@@ -6,7 +6,7 @@
         <p>
           {{ group.description }}
         </p>
-        {% for post in page_obj%}
+        {% for post in page_obj %}
         <article>
           <ul>
             <li>
@@ -20,7 +20,7 @@
           <p>
             {{ post.text }}
           </p>         
-          <a href="{% url 'posts:post_detail' post.id%}">подробная информация</a>
+          <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
         </article>       
         <a href="{% url 'posts:post_list' post.group.slug %}">все записи группы</a>        
         </article>
