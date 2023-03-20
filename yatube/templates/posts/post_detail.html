@@ -12,15 +12,13 @@
             {%if post.group != None %}
             <li class="list-group-item">
               Группа: {{ post.group }}
-              {% else %}
-              Группа:
               {% endif %}
               {% if post.group %}
               <a href="{% url 'posts:post_list' post.group.slug %}">все записи группы</a>
             </li>
             {% endif %}
             <li class="list-group-item">
-              Автор: {{ post.author.get_full_name }} {{ post.author }}
+              Автор: {{ post.author.get_full_name }}
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
               Всего постов автора:  <span >{{ post.author.posts.count }}</span>

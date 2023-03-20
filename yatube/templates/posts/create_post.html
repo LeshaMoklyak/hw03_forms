@@ -41,13 +41,7 @@
                       >
                         {{ field.help_text|safe }}
                       </small>
-                    {% endif %}
-                    {% if post.group %}    
-                    <a href="{% url 'posts:group_list' post.group.slug %}">все записи группы</a> 
-                    {% endif %}  
-                    <small id="id_group-help" class="form-text text-muted"> 
-                      Группа, к которой будет относиться пост 
-                    </small> 
+                    {% endif %}    
                   </div> 
                   {% endfor %}
                   <div class="d-flex justify-content-end"> 

@@ -20,7 +20,7 @@ def index(request):
 
 def group_posts(request, slug):
     group = get_object_or_404(Group, slug=slug)
-    post_list = group.posts.select_related('group', 'author')
+    post_list = group.posts.select_related('author')
     paginator = Paginator(post_list, POST_PER_PAGE)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)

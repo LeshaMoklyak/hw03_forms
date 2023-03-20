@@ -21,9 +21,7 @@
             {{ post.text }}
           </p>         
           <a href="{% url 'posts:post_detail' post.id %}">подробная информация</a>
-        </article>       
-        <a href="{% url 'posts:post_list' post.group.slug %}">все записи группы</a>        
-        </article>
+        </article>             
         {% if not forloop.last %}<hr>{% endif %}
         {% endfor %}
         {% include 'includes/paginator.html' %}
